@@ -25,13 +25,14 @@ class UserProfile extends Component {
         ${banner ? html`<div class="banner"><img src="${banner}" alt="Banner" /></div>` : ''}
         <div class="profile-details">
           <img src="${picture}" alt="Profile Picture" class="user-picture" />
-          <h2><span title="In the Nostr Strong Set">ðŸ›¡ï¸</span> ${name}</h2>
+          <h2><span title="In the Nostr Strong Set">Profile Picture
+          🛡️</span> ${name}</h2>
           
           ${key ? html`<p class="pubkey">Pubkey: <a href="${irisLink}" target="_blank">${shortenedPubKey}</a></p>` : ''}
           ${about ? html`<p class="about">${about}</p>` : ''}
           <div class="icons" style="display: flex; align-items: center;">
             ${github ? html`<a href="${githubLink}" target="_blank"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="18" height="18" /></a>` : ''}
-          <a style="text-decoration:none" href="${canonical}" target="_blank">ðŸ“¥</a>
+          <a style="text-decoration:none" href="${canonical}" target="_blank">📥</a>
           </div>
         </div>
       </div>
@@ -41,7 +42,7 @@ class UserProfile extends Component {
 
 class Contacts extends Component {
   render() {
-    const { contacts, userPublicKey } = this.props
+    const { contacts } = this.props
 
     return html`
       <div class="social-links card">
