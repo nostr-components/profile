@@ -1,6 +1,6 @@
 {
   "name": "profile",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "nostr-components-profile",
   "main": "index.js",
   "scripts": {
