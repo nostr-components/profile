@@ -2,8 +2,10 @@ import { html, Component, render } from '../js/standalone.module.js'
 import { getQueryStringValue, saveFile } from '../util.js'
 import { findNestedObjectById } from '../js/linkedobjects.js'
 import '../js/nostr-ui.js'
+import UserProfile from '../components/UserProfile.js'
+import Contacts from '../components/Contacts.js'
 
-function doc() {
+function doc () {
   if (di.data.length) {
     return di.data[0]
   } else {
@@ -11,78 +13,9 @@ function doc() {
   }
 }
 
-class UserProfile extends Component {
-  render() {
-    const { userPublicKey, name, picture, about, banner, github } = this.props
-    const key = getQueryStringValue('pubkey') || userPublicKey
-    const irisLink = `https://iris.to/${key}`
-    const canonical = `/.well-known/nostr/pubkey/${key}/index.json`
-    const githubLink = github
-    const shortenedPubKey = key ? key.slice(0, 16) : ''
-
-    return html`
-      <div class="user-profile card">
-        ${banner ? html`<div class="banner"><img src="${banner}" alt="Banner" /></div>` : ''}
-        <div class="profile-details">
-          <img src="${picture}" alt="Profile Picture" class="user-picture" />
-          <h2><span title="In the Nostr Strong Set">Profile Picture
-          🛡️</span> ${name}</h2>
-          
-          ${key ? html`<p class="pubkey">Pubkey: <a href="${irisLink}" target="_blank">${shortenedPubKey}</a></p>` : ''}
-          ${about ? html`<p class="about">${about}</p>` : ''}
-          <div class="icons" style="display: flex; align-items: center;">
-            ${github ? html`<a href="${githubLink}" target="_blank"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="18" height="18" /></a>` : ''}
-          <a style="text-decoration:none" href="${canonical}" target="_blank">📥</a>
-          </div>
-        </div>
-      </div>
-    `
-  }
-}
-
-class Contacts extends Component {
-  render() {
-    const { contacts } = this.props
-
-    return html`
-      <div class="social-links card">
-        <h3>Contacts</h3>
-        ${contacts?.map(app => {
-      const contact = app.split(':')[2]
-      const nick = contact.substring(0, 32)
-
-      // if pubkey is set href is new pubkey
-      // if in canonical directory href is ../pubkey/
-      // if in non canonical directory href is /pubkey
-      function getHref() {
-        const currentPath = new URL(window.location.href).pathname
-        const pubkey = getQueryStringValue('pubkey')
-
-        if (pubkey) {
-          return `?pubkey=${contact}`
-        } else if (currentPath.includes('/.well-known/nostr/pubkey')) {
-          return `../${contact}/`
-        } else {
-          return `/${contact}`
-        }
-      }
-      const href = getHref()
-
-      return html`
-          <div class="contact">
-            <a href="${href}" class="contact-link">${nick}</a>
-          </div>
-        `
-    })}
-
-      </div>
-    `
-  }
-}
-
 // APP
 export class App extends Component {
-  constructor() {
+  constructor () {
     super()
     this.fetchProfile = this.fetchProfile.bind(this)
 
@@ -116,12 +49,12 @@ export class App extends Component {
     }
   }
 
-  getRelay() {
+  getRelay () {
     const relay = getQueryStringValue('relay') || doc().relay || 'wss://nostr-pub.wellorder.net'
     return relay
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     let key = 'de7ecd1e2976a6adb2ffa5f4db81a7d812c8bb6698aa00dcf1e76adb55efd645'
     if (doc().mainEntity && doc().mainEntity['@id']) {
       key = getQueryStringValue('pubkey') || doc().mainEntity['@id'].replace('nostr:pubkey:', '')
@@ -150,7 +83,7 @@ export class App extends Component {
   }
 
   // fetchProfile.js
-  fetchProfile(pubkey, render) {
+  fetchProfile (pubkey, render) {
     const NOSTR_RELAY_URL = this.getRelay()
 
     let key
@@ -200,7 +133,7 @@ export class App extends Component {
     }
   }
 
-  render() {
+  render () {
     const { data, error } = this.state
 
     if (error) {
