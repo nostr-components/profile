@@ -1,5 +1,5 @@
 {
-  "name": "profile",
+  "name": "nc_profile",
   "version": "0.0.3",
   "description": "nostr-components-profile",
   "main": "index.js",
