@@ -2,7 +2,7 @@
   "name": "nc_profile",
   "version": "0.0.6",
   "description": "nostr-components-profile",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

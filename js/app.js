@@ -1,10 +1,9 @@
-import { html, Component, render } from '../js/standalone.module.js'
+import { html, render } from '../js/standalone.module.js'
 import { getQueryStringValue } from '../util.js'
 import '../js/nostr-ui.js'
-import UserProfile from '../components/UserProfile.js'
-import Contacts from '../components/Contacts.js'
+import Profile from '../lib/index.js'
 
-function doc() {
+function doc () {
   if (di.data.length) {
     return di.data[0]
   } else {
@@ -12,91 +11,9 @@ function doc() {
   }
 }
 
-// APP
-export class App extends Component {
-  constructor(props) {
-    super(props)
+const defaultPubkey = 'de7ecd1e2976a6adb2ffa5f4db81a7d812c8bb6698aa00dcf1e76adb55efd645'
+const docPubkey = doc().mainEntity && doc().mainEntity['@id'] && doc().mainEntity['@id'].replace('nostr:pubkey:', '')
 
-    this.state = {
-      userPublicKey: null,
-      profilePubkey: props.pubkey,
-      data: {},
-      error: null
-    }
-  }
+const pubkey = getQueryStringValue('pubkey') || docPubkey || defaultPubkey
 
-  getRelay() {
-    const relay = getQueryStringValue('relay') || doc().relay || 'wss://nostr-pub.wellorder.net'
-    return relay
-  }
-
-  async componentDidMount() {
-    const key = this.state.profilePubkey
-
-    let profile
-    const cache = 'https://nostr.social'
-    try {
-      profile = await fetch(`${cache}/.well-known/nostr/pubkey/${key}/index.json`)
-    } catch (e) {
-      console.log('error', e)
-      this.setState({ error: 'Error fetching profile. Please check your network connection and try again.' })
-    }
-
-    try {
-      const data = await profile.json()
-      console.log('### profile', data)
-      this.setState({ data })
-    } catch (e) {
-      console.log('error', e)
-      this.setState({ error: 'This profile is not yet set up.' })
-    }
-  }
-
-  render() {
-    const { data, error } = this.state
-
-    if (error) {
-      return html`
-      ${error ? html`<div class="error">${error}</div><a href="/">Back</a>` : ''} 
-      `
-    }
-
-    let key
-    const me = data?.mainEntity
-    if (!me) return
-    console.log('### me', me)
-    if (doc().mainEntity && doc().mainEntity['@id']) {
-      key = doc().mainEntity['@id'].replace('nostr:pubkey:', '')
-    } else {
-      key = this.state.userPublicKey
-    }
-
-    return html`
-
-      <div id="container">
-
-        <div class="content">
-          <${UserProfile}
-            userPublicKey="${key}"
-            name="${me?.name}"
-            picture="${me?.picture}"
-            about="${me?.about}"
-            banner="${me?.banner}"
-            github="${me?.github}"
-          />
-          <${Contacts}
-            contacts="${me.following}" userPublicKey="${key}"
-          />
-        </div>
-
-      </div>
-    `
-  }
-}
-
-let pubkey = 'de7ecd1e2976a6adb2ffa5f4db81a7d812c8bb6698aa00dcf1e76adb55efd645'
-if (doc().mainEntity && doc().mainEntity['@id']) {
-  pubkey = getQueryStringValue('pubkey') || doc().mainEntity['@id'].replace('nostr:pubkey:', '')
-}
-
-render(html` <${App} pubkey=${pubkey} /> `, document.body)
+render(html` <${Profile} pubkey=${pubkey} /> `, document.body)
