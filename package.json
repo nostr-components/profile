@@ -1,6 +1,6 @@
 {
   "name": "nc_profile",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "nostr-components-profile",
   "main": "lib/index.js",
   "scripts": {
